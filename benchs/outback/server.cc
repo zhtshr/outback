@@ -36,12 +36,14 @@ int main(int argc, char **argv) {
   std::vector<std::unique_ptr<XThread>> workers = 
         rolex_server_workers(FLAGS_mem_threads);
 
+  LOG(2) << "create workers";
   ctrl.start_daemon();
 
   running = false;
   for (auto &w : workers) {
     w->start();
   }
+  LOG(2) << "start workers";
 
   while(ready_threads < FLAGS_mem_threads) sleep(0.3);
   running = true;
@@ -70,6 +72,8 @@ auto rolex_server_workers(const usize& nthreads) -> std::vector<std::unique_ptr<
        * @brief Constuct UD qp and register in the RCtrl
        */
       // create NIC and QP
+      LOG(2) << "begin create NIC " << FLAGS_nic_idx;
+
       auto thread_id = i;
       auto nic_for_recv = RNic::create(RNicInfo::query_dev_names().at(FLAGS_nic_idx)).value();
       auto qp_recv = UD::create(nic_for_recv, QPConfig()).value();
@@ -89,6 +93,7 @@ auto rolex_server_workers(const usize& nthreads) -> std::vector<std::unique_ptr<
       ctrl.registered_qps.reg("b" + std::to_string(thread_id), qp_recv);
       // LOG(4) << "server thread #" << thread_id << " started!";
 
+      LOG(2) << "register UD";
       /**
        * @brief Construct RPC
        * 

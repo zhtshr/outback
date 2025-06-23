@@ -755,7 +755,7 @@ public:
   /// Side effect: 1) discard all memory except keys and values. 2) build fail, or
   /// all the values and disjoint set are properly set
   bool tryBuild() {
-    cout << "othello rebuild" << endl;
+    // cout << "othello rebuild" << endl;
 
     resetBuildState();
     
